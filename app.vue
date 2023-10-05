@@ -53,6 +53,7 @@ async function validateAddress() {
 }
 
 async function getInvoice() {
+  invoice.value = null
   const res = await $fetch('/api/callback', {
     method: 'POST',
     body: {
