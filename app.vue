@@ -1,5 +1,15 @@
 <script setup>
 import QrcodeVue from 'qrcode.vue'
+import { useClipboard } from '@vueuse/core'
+
+useHead({
+  htmlAttrs: {
+    class: 'dark'
+  },
+  bodyAttrs: {
+    class: 'dark:bg-black'
+  }
+})
 
 const { query } = useRoute()
 
@@ -64,39 +74,54 @@ async function getInvoice() {
   invoice.value = res.invoice
 }
 
-async function share() {
-  // TODO
+const isCopied = ref(false)
+
+function share () {
+  const { copy: copyToClipboard, isSupported } = useClipboard()
+  isCopied.value = false
+
+  if (isSupported.value) {
+    copyToClipboard(invoice.value)
+    isCopied.value = true
+
+    setTimeout(() => {
+      isCopied.value = false
+    }, 2_000)
+  } else {
+    alert('cannot copy on this device')
+  }
 }
 </script>
 
 <template>
-  <div>
-    <div>
-      lightning address:
-      <input v-model="lnAddress" type="email" />
-    </div>
-    <button @click="validateAddress">validate</button>
-  </div>
-  <div v-if="isValidated">
-    <div v-if="base64Image">
-      <img :src="base64Image" style="height: 160px; width: 160px;" />
+  <div v-if="invoice" class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 text-white">
+    <div class="sm:mx-auto sm:w-full">
+      <h1 class="font-bold text-center text-2xl leading-loose">
+        Send <Badge>{{ Number(amount).toLocaleString(undefined, { maximumFractionDigits: 2 }) }}</Badge> sats <br/> to <Badge>{{ lnAddress }}</Badge>
+      </h1>
     </div>
     <div>
-      amount (Sats):
-      <input
-        v-model="amount"
-        type="number"
-        step="1"
-        :min="minSendable"
-        :max="maxSendable"
-      />
+      <div class="flex justify-center mt-10" v-if="base64Image">
+        <img :src="base64Image" style="height: 120px; width: 120px;" class="rounded-full" />
+      </div>
     </div>
-    <div>
-      <button @click="getInvoice">get invoice</button>
-      <!-- <button @click="share">share</button> -->
+    <div class="mt-10 sm:mx-auto sm:w-full">
+      <h3 class="text-center">
+        Open the lightning wallet,<br/>scan the QR Code or paste in the invoice
+      </h3>
     </div>
-    <div v-if="invoice">
-      <qrcode-vue :value="invoice" size="300"></qrcode-vue>
+    <div class="flex justify-center mt-10">
+      <div class="border-2 p-2 rounded-lg border-orange-500">
+        <qrcode-vue :value="invoice" size="250"></qrcode-vue>
+      </div>
+    </div>
+    <div class="flex justify-center mt-10">
+      <div>
+        <button @click.prevent="share" type="button" class="rounded-md bg-orange-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500">
+          <span v-if="!isCopied">Copy invoice</span>
+          <span v-else>copied</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
