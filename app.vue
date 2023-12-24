@@ -94,28 +94,28 @@ function share () {
 </script>
 
 <template>
-  <div v-if="invoice" class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 text-white">
+  <div v-if="invoice" class="flex min-h-full flex-col justify-center py-2 lg:py-12 sm:px-6 lg:px-8 text-white">
     <div class="sm:mx-auto sm:w-full">
       <h1 class="font-bold text-center text-2xl leading-loose">
         Send <Badge>{{ Number(amount).toLocaleString(undefined, { maximumFractionDigits: 2 }) }}</Badge> sats <br/> to <Badge>{{ lnAddress }}</Badge>
       </h1>
     </div>
     <div>
-      <div class="flex justify-center mt-10" v-if="base64Image">
+      <div class="flex justify-center mt-5" v-if="base64Image">
         <img :src="base64Image" style="height: 120px; width: 120px;" class="rounded-full" />
       </div>
     </div>
-    <div class="mt-10 sm:mx-auto sm:w-full">
+    <div class="mt-5 sm:mx-auto sm:w-full">
       <h3 class="text-center">
         Open the lightning wallet,<br/>scan the QR Code or paste in the invoice
       </h3>
     </div>
-    <div class="flex justify-center mt-10">
+    <div class="flex justify-center mt-5">
       <div class="border-2 p-2 rounded-lg border-orange-500">
         <qrcode-vue :value="invoice" size="250"></qrcode-vue>
       </div>
     </div>
-    <div class="flex justify-center mt-10">
+    <div class="flex justify-center mt-5">
       <div>
         <button @click.prevent="share" type="button" class="rounded-md bg-orange-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500">
           <span v-if="!isCopied">Copy invoice</span>
