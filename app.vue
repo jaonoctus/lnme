@@ -111,8 +111,8 @@ function share () {
       </h3>
     </div>
     <div class="flex justify-center mt-5">
-      <div class="border-2 p-2 rounded-lg border-orange-500">
-        <qrcode-vue :value="invoice" :size="250"></qrcode-vue>
+      <div class="border-2 p-2 rounded-lg border-orange-500 bg-white">
+        <qrcode-vue :value="invoice" :size="250" level="L"></qrcode-vue>
       </div>
     </div>
     <div class="flex justify-center mt-5">
