@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import QrcodeVue from 'qrcode.vue'
 import { useClipboard } from '@vueuse/core'
 
@@ -13,30 +13,30 @@ useHead({
 
 const { query } = useRoute()
 
-const lnAddress = ref('')
-const amount = ref('')
+const lnAddress = ref<string>('')
+const amount = ref(0)
 const isValidated = ref(false)
 
-const base64Image = ref(null)
-const callback = ref(null)
+const base64Image = ref<string|null>(null)
+const callback = ref<string|null>(null)
 const maxSendable = ref(0)
 const minSendable = ref(0)
 
-const invoice = ref(null)
+const invoice = ref<string|null>(null)
 
 onMounted(async () => {
-  if (query.ln) {
+  if (query.ln && typeof query.ln === 'string') {
     lnAddress.value = query.ln
     await validateAddress()
   }
-  if (query.sats) {
-    amount.value = query.sats
+  if (query.sats && typeof query.sats === 'string') {
+    amount.value = Number(query.sats)
     await getInvoice()
   }
 })
 
 async function validateAddress() {
-  amount.value = ''
+  amount.value = 0
   isValidated.value = false
   base64Image.value = null
   callback.value = null
@@ -80,7 +80,7 @@ function share () {
   const { copy: copyToClipboard, isSupported } = useClipboard()
   isCopied.value = false
 
-  if (isSupported.value) {
+  if (isSupported.value && invoice.value) {
     copyToClipboard(invoice.value)
     isCopied.value = true
 
@@ -112,7 +112,7 @@ function share () {
     </div>
     <div class="flex justify-center mt-5">
       <div class="border-2 p-2 rounded-lg border-orange-500">
-        <qrcode-vue :value="invoice" size="250"></qrcode-vue>
+        <qrcode-vue :value="invoice" :size="250"></qrcode-vue>
       </div>
     </div>
     <div class="flex justify-center mt-5">
